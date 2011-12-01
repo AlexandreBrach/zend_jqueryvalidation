@@ -14,6 +14,7 @@ class View_Helper_Jqueryvalidation extends Zend_View_Helper_Abstract
 			$options = self::_convertArray( $options );
 		}
 		
+		$this->view->jQuery()->enable();
 		$this->view->jQuery()->addJavascriptFile( '/jquery/plugins/jquery.validate.js' );
 
 		if( '' === ltrim( rtrim( $form->getId() ) ) )
