@@ -149,9 +149,11 @@ class View_Helper_Jqueryvalidation extends Zend_View_Helper_Abstract
 
 	protected static function _objMerge( $obj1, $obj2 )
 	{
-		foreach ($obj2 as $key => $value) {
+		foreach( $obj2 as $key => $value ) 
+		{
 			if( is_object( $value ) )
 			{
+				$obj1->$key = new stdClass();
 				self::_objMerge( $obj1->$key, $value );
 			}
 			else
