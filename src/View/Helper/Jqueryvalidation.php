@@ -1,16 +1,20 @@
 <?php
 
-class View_Helper_Jqueryvalidation extends Zend_Controller_Action_Helper_Abstract
+class View_Helper_Jqueryvalidation extends Zend_View_Helper_Abstract
 {
-	public function setView( Zend_View_Interface $view )
-    {
-        $this->_view = $view;
-    }
-	
-	public function jqueryValidation( $form, $options )
+	public function jqueryValidation( $form, $options = null )
 	{
-		// Ceci sera il injecté une seule fois ?
-		$this->_view->jQuery()->addJavascriptFile( '/jquery/plugins/jquery.validate.js' );
+		if( null === $options )
+		{
+			$options = new stdClass();
+		}
+		
+		if( is_array( $options ) )
+		{
+			$options = self::_convertArray( $options );
+		}
+		
+		$this->view->jQuery()->addJavascriptFile( '/jquery/plugins/jquery.validate.js' );
 
 		if( '' === ltrim( rtrim( $form->getId() ) ) )
 		{
@@ -54,6 +58,7 @@ class View_Helper_Jqueryvalidation extends Zend_Controller_Action_Helper_Abstrac
 			}
 		}
 
+		self::_objMerge( $formRules, $options );		
 		$jScript = "jQuery('#{$form->getId()}').validate( " 
 			. str_replace( '"__className":"stdClass",', '', Zend_Json::encode( $formRules ) ) . ');';
 
@@ -141,4 +146,34 @@ class View_Helper_Jqueryvalidation extends Zend_Controller_Action_Helper_Abstrac
 		}
 	}
 
+	protected static function _objMerge( $obj1, $obj2 )
+	{
+		foreach ($obj2 as $key => $value) {
+			if( is_object( $value ) )
+			{
+				self::_objMerge( $obj1->$key, $value );
+			}
+			else
+			{
+				$obj1->$key = $value;
+			}
+		}
+		return $obj1;
+	}
+	
+	protected static function _convertArray( $array )
+	{
+		$obj = new stdClass();
+		foreach( $array as $key => $value) {
+			if( is_array( $value ) )
+			{
+				$obj->$key = self::_convertArray( $value );
+			}
+			else
+			{
+				$obj->$key = $value;
+			}
+		}
+		return $obj;
+	}
 }
