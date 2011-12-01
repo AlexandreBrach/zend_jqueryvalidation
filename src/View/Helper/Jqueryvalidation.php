@@ -153,7 +153,10 @@ class View_Helper_Jqueryvalidation extends Zend_View_Helper_Abstract
 		{
 			if( is_object( $value ) )
 			{
-				$obj1->$key = new stdClass();
+				if( !isset( $obj1->$key) )
+				{
+					$obj1->$key = new stdClass();	
+				}
 				self::_objMerge( $obj1->$key, $value );
 			}
 			else
@@ -167,7 +170,8 @@ class View_Helper_Jqueryvalidation extends Zend_View_Helper_Abstract
 	protected static function _convertArray( $array )
 	{
 		$obj = new stdClass();
-		foreach( $array as $key => $value) {
+		foreach( $array as $key => $value)
+		{
 			if( is_array( $value ) )
 			{
 				$obj->$key = self::_convertArray( $value );
